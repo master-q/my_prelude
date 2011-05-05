@@ -6,7 +6,8 @@ import GHC.Num ((+),(*),(-))
 class Functor f where
   fmap, (<$>) :: (a -> b) -> f a -> f b
   (<$>) = fmap
-  -- (<$) これはfmapを使って作れるの？
+  (<$) :: a -> f b -> f a
+  (<$) a x = fmap (\_ -> a) x
 
 -- Applicative
 class Functor f => Applicative f where
@@ -19,6 +20,8 @@ class Functor f => Applicative f where
 -- Monad
 class Applicative m => Monad m where
   (>>=) :: m a -> (a -> m b) -> m b
+  -- (>>) :: m a -> m b -> m b
+  -- fail :: String -> m a
 
 -- [] (Functor,Monad,Eq,Ord,Read,Show)
 -- data [] a = [] | a : [a] -- <= []自体の定義は構文糖でいいのかな？
