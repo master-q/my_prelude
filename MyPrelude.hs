@@ -2,6 +2,10 @@
 import Prelude (error)
 import GHC.Num ((+),(*),(-))
 
+-- Basic
+id :: a -> a
+id a = a
+
 -- Functor
 class Functor f where
   fmap, (<$>) :: (a -> b) -> f a -> f b
@@ -14,8 +18,10 @@ class Functor f => Applicative f where
   return, pure :: a -> f a
   return = pure
   (<*>) :: f (a -> b) -> f a -> f b
-  -- (*>) :: f a -> f b -> f b
-  -- (<*) :: f a -> f b -> f a
+  (*>) :: f a -> f b -> f b
+  (*>) x y = ((\_ -> id) <$> x) <*> y
+  (<*) :: f a -> f b -> f a
+  (<*) x y = ((\i -> (\_ -> i)) <$> x) <*> y
 
 -- Monad
 class Applicative m => Monad m where
