@@ -30,41 +30,59 @@ class Functor f => Applicative f where
 -- Monad -----------------------------------------------
 class Applicative m => Monad m where
   (>>=) :: m a -> (a -> m b) -> m b
-  -- (>>) :: m a -> m b -> m b
-  -- fail :: String -> m a
+  (>>) :: m a -> m b -> m b
+  (>>) m n = m >>= (const n)
+  (=<<) :: (a -> m b) -> m a -> m b
+  (=<<) f m = m >>= f
+  -- fail :: String -> m a -- <= いつ使うの？
 
 -- [] --------------------------------------------------
 -- data [] a = [] | a : [a] -- <= []自体の定義は構文糖でいいのかな？
+
+(++) :: [a] -> [a] -> [a]
+(++) [] y = y
+(++) (x:xs) y = x : (xs ++ y)
+
 instance Functor [] where
   fmap f [] = []
   fmap f (x:xs) = (f x) : (fmap f xs)
+
+concatMap :: (a -> [b]) -> [a] -> [b]
+concatMap f (x:xs) = (f x) ++ (concatMap f xs)
+
 instance Applicative [] where
-  pure a = [a] -- これでいいのか？
+  pure a = [a]
   (<*>) [] _ = []
-  (<*>) (x:xs) y = (x <$> y) `cat` (xs <*> y)
-    where
-      cat :: [a] -> [a] -> [a]
-      cat [] y = y
-      cat (x:xs) y = x : (xs `cat` y)
--- xxx TODO: instance Monad [] where
+  (<*>) (x:xs) y = (x <$> y) ++ (xs <*> y)
+
+instance Monad [] where
+  (>>=) m f = concatMap f m -- なんかdo構文にするとココを使わないみたい。。。
 
 -- Maybe -----------------------------------------------
 data Maybe a = Nothing | Just a
              deriving (Show)
+
 instance Functor Maybe where
   fmap _ Nothing = Nothing
   fmap f (Just x) = Just (f x)
+
 instance Applicative Maybe where
   pure a = Just a
   (<*>) Nothing _ = Nothing
   (<*>) _ Nothing = Nothing
   (<*>) (Just x) y = x <$> y
-
--- IO --------------------------------------------------
-
+-- xxx TODO: instance Monad Maybe where
 
 -- State -----------------------------------------------
+newtype State s a = State { runState :: (s -> (a,s)) }
 
+
+-- IO --------------------------------------------------
+-- data World = World
+-- newtype IO a = World -> (a, World) -- <= newtypeとtypeの違いは？
+-- xxx TODO: instance Functor IO where
+-- xxx TODO: instance Applicative IO where
+-- xxx TODO: instance Monad IO where
 
 -- etc
 head :: [a] -> a
