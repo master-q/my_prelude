@@ -2,6 +2,7 @@
 import Prelude (error)
 import GHC.Num ((+),(*),(-))
 import GHC.Show
+-- import GHC.Types (Char) -- これを使ってしまうとIOが定義されちゃう。。。
 
 -- Basic
 id :: a -> a
@@ -71,19 +72,29 @@ instance Applicative Maybe where
   (<*>) Nothing _ = Nothing
   (<*>) _ Nothing = Nothing
   (<*>) (Just x) y = x <$> y
--- xxx TODO: instance Monad Maybe where
+
+instance Monad Maybe where
+  (>>=) Nothing _ = Nothing
+  (>>=) (Just x) f = f x
 
 -- State -----------------------------------------------
 newtype State s a = State { runState :: (s -> (a,s)) }
 
+-- instance Functor (State s) where
 
 -- IO --------------------------------------------------
--- data World = World
--- newtype IO a = World -> (a, World) -- <= newtypeとtypeの違いは？
+data World = World
+type IO a = World -> (a, World) -- <= newtypeとtypeの違いは？
 -- xxx TODO: instance Functor IO where
 -- xxx TODO: instance Applicative IO where
 -- xxx TODO: instance Monad IO where
 
--- etc
-head :: [a] -> a
-head (x:xs) = x
+{--
+type String = [Char]
+
+putStrLn :: String -> IO ()
+putStrLn s = error s -- <= これ以上どうしろと。。。
+
+getLine_fake :: String -> IO String
+getLine_fake s = IO s
+--}
