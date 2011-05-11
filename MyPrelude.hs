@@ -49,6 +49,7 @@ instance Functor [] where
   fmap f (x:xs) = (f x) : (fmap f xs)
 
 concatMap :: (a -> [b]) -> [a] -> [b]
+concatMap f [] = []
 concatMap f (x:xs) = (f x) ++ (concatMap f xs)
 
 instance Applicative [] where
