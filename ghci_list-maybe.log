@@ -1,0 +1,53 @@
+casper$ ghci MyPrelude.hs                                     [~/src/my_prelude]
+GHCi, version 7.0.3: http://www.haskell.org/ghc/  :? for help
+Loading package ghc-prim ... linking ... done.
+Loading package integer-gmp ... linking ... done.
+Loading package base ... linking ... done.
+[1 of 1] Compiling Main             ( MyPrelude.hs, interpreted )
+Ok, modules loaded: Main.
+*Main> --- Maybe
+*Main> fmap (+1) (Just 10)
+Just 11
+*Main> fmap (+1) Nothing 
+Nothing
+*Main> 'T' <$ (Just 10)
+Just 'T'
+*Main> Nothing <*> (Just 10)
+Nothing
+*Main> (Just (+1)) <*> (Just 10)
+Just 11
+*Main> (Just (+1)) <*> Nothing 
+Nothing
+*Main> (Just 10) <* Nothing 
+Nothing
+*Main> Nothing <* (Just 10)
+Nothing
+*Main> Nothing <* Nothing 
+Nothing
+*Main> (Just 10) <* (Just 'T')
+Just 10
+*Main> (Just 10) *> (Just 'T')
+Just 'T'
+*Main> (Just 10) >>= (\x -> return x)
+Just 10
+*Main> (Just 10) >>= (\x -> (Just (10+x)) >>= (\y -> return (x,y)))
+Just (10,20)
+*Main> 
+*Main> --- []
+*Main> fmap (+1) [1,2,3,4,5]
+[2,3,4,5,6]
+*Main> 1 <$ [1,2,3,4,5]
+[1,1,1,1,1]
+*Main> [(+1),(+2)] <*> [10,20,30,40]
+[11,21,31,41,12,22,32,42]
+*Main> [1,2] *> [10,20,30,40]
+[10,20,30,40,10,20,30,40]
+*Main> [1,2] <* [10,20,30,40]
+[1,1,1,1,2,2,2,2]
+*Main> [1,2] >>= (\x -> return x)
+[1,2]
+*Main> [1,2] >>= (\x -> [10+x,20+x,30+x] >>= (\y ->  return (x,y)))
+[(1,11),(1,21),(1,31),(2,12),(2,22),(2,32)]
+*Main> [1,2] >> [10,20,30,40]
+[10,20,30,40,10,20,30,40]
+*Main> 
